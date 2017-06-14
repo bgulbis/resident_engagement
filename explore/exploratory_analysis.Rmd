@@ -42,7 +42,7 @@ scores %>%
 # ggplotly(p, dynamicTicks = TRUE)
 ```
 
-```{r, fig.width=8, fig.height=8, fig.cap="Resident engagement score by question compared to overall employee score."}
+```{r, fig.width=8, fig.height=8, fig.cap="Resident engagement score by question compared to overall employee engagement score."}
 scores %>%
     arrange(Compare_Overall) %>%
     # top_n(-10, Score) %>%

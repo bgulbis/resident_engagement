@@ -1,0 +1,78 @@
+---
+title: "Resident Engagement Results"
+subtitle: "2016-2017"
+author: "Brian Gulbis"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, message=FALSE}
+library(tidyverse)
+library(forcats)
+library(themebg)
+
+scores <- read_rds("../data/final/scores.Rds")
+```
+
+```{r, fig.width=8, fig.height=8, fig.cap="Resident engagement score by question compared to overall employee engagement score."}
+scores %>%
+    arrange(Compare_Overall) %>%
+    # top_n(-10, Score) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Compare_Overall)) +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    geom_hline(yintercept = 0, color = "grey65") +
+    xlab("") +
+    ylab("Difference Relative to Overall Score") +
+    scale_fill_brewer(palette = "Dark2") +
+    coord_flip() +
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
+```
+
+```{r, fig.width=8, fig.cap="Questions with 8 or more residents answering with a favorable score"}
+scores %>%
+    filter(Favorable >= 0.8) %>%
+    arrange(Favorable, Score) %>%
+    # top_n(10, Favorable) %>%
+    mutate_at("Favorable", funs(. * 100)) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Favorable)) +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    xlab("") +
+    scale_y_continuous("Residents with Favorable Score (%)") +
+    scale_fill_brewer(palette = "Dark2") +
+    coord_flip() +
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
+```
+
+```{r, fig.width=8, fig.cap="Questions with 3 or more residents answering with an unfavorable score"}
+scores %>%
+    filter(Unfavorable >= 0.3) %>%
+    arrange(Unfavorable, desc(Score)) %>%
+    # top_n(10, Unfavorable) %>%
+    mutate_at("Unfavorable", funs(. * 100)) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Unfavorable)) +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    xlab("") +
+    scale_y_continuous("Residents with Unfavorable Score (%)") +
+    scale_fill_brewer(palette = "Dark2") +
+    coord_flip() +
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
+```

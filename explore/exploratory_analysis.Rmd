@@ -1,0 +1,37 @@
+---
+title: "Resident Engagement Scores 2016-2017"
+author: "Brian Gulbis"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: 
+  html_document:
+    code_folding: hide
+    fig_caption: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(forcats)
+library(themebg)
+library(plotly)
+
+scores <- read_rds("../data/final/scores.Rds")
+```
+
+```{r, fig.height=7, fig.cap="Aggregate score for each question"}
+scores %>%
+    arrange(Score) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Score)) +
+    geom_bar(stat = "identity", fill = "grey85") +
+    geom_hline(yintercept = 3.62, color = "grey50") +
+    geom_hline(yintercept = 3.62 + 0.65, color = "grey50", linetype = "dashed") +
+    coord_flip() +
+    theme_bg()
+
+ggplotly(dynamicTicks = TRUE)
+```
+

@@ -1,6 +1,6 @@
 ---
 title: "Resident Engagement Results"
-subtitle: "2016-2017"
+subtitle: "Class of 2016-2017"
 author: "Brian Gulbis"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: pdf_document
@@ -18,7 +18,7 @@ library(themebg)
 scores <- read_rds("../data/final/scores.Rds")
 ```
 
-```{r, fig.width=8, fig.height=8, fig.cap="Resident engagement score by question compared to overall employee engagement score."}
+```{r, fig.width=8, fig.height=8, fig.cap="Resident engagement score by question compared to overall employee engagement score"}
 scores %>%
     arrange(Compare_Overall) %>%
     # top_n(-10, Score) %>%

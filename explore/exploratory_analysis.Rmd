@@ -22,13 +22,15 @@ scores <- read_rds("../data/final/scores.Rds")
 ```
 
 ```{r, fig.width=8, fig.height=7, fig.cap="Aggregate score for each question. Solid line indicates overall score, dashed line indicates overall employee score."}
-p <- scores %>%
+scores %>%
     arrange(Score) %>%
     mutate_at("Item", fct_inorder) %>%
     ggplot(aes(x = Item, y = Score)) +
     geom_bar(aes(fill = Domain), stat = "identity") +
     geom_hline(yintercept = 3.62, color = "grey35") +
     geom_hline(yintercept = 3.62 + 0.65, color = "grey20", linetype = "dashed") +
+    xlab("") +
+    scale_y_continuous("Score", limits = c(0, 5), breaks = seq(0, 5, 1)) +
     scale_fill_brewer(palette = "Dark2") +
     coord_flip() +
     theme_bg(yticks = FALSE) +
@@ -37,7 +39,102 @@ p <- scores %>%
           legend.direction = "horizontal",
           plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
 
-p
 # ggplotly(p, dynamicTicks = TRUE)
 ```
 
+```{r, fig.width=8, fig.height=8, fig.cap="Resident engagement score by question compared to overall employee score."}
+scores %>%
+    arrange(Compare_Overall) %>%
+    # top_n(-10, Score) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Compare_Overall)) +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    geom_hline(yintercept = 0, color = "grey65") +
+    xlab("") +
+    ylab("Difference Relative to Overall Score") +
+    scale_fill_brewer(palette = "Dark2") +
+    coord_flip() +
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
+
+# ggplotly(p, dynamicTicks = TRUE)
+```
+
+```{r, fig.width=8, fig.cap="Top 10 questions by score (areas of strength)."}
+scores %>%
+    arrange(Score) %>%
+    top_n(10, Score) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Score)) +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    xlab("") +
+    scale_y_continuous("Score", limits = c(0, 5), breaks = seq(0, 5, 1)) +
+    scale_fill_brewer(palette = "Dark2") +
+    coord_flip() +
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
+```
+
+```{r, fig.width=8, fig.cap="Bottom 10 questions by score (areas of concern)."}
+scores %>%
+    arrange(Score) %>%
+    top_n(-10, Score) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Score)) +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    xlab("") +
+    scale_y_continuous("Score", limits = c(0, 5), breaks = seq(0, 5, 1)) +
+    scale_fill_brewer(palette = "Dark2") +
+    coord_flip() +
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
+```
+
+```{r, fig.width=8, fig.cap="Questions with 8 or more residents answering with a favorable score"}
+scores %>%
+    filter(Favorable >= 0.8) %>%
+    arrange(Favorable, Score) %>%
+    # top_n(10, Favorable) %>%
+    mutate_at("Favorable", funs(. * 100)) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Favorable)) +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    xlab("") +
+    scale_y_continuous("Residents with Favorable Score (%)") +
+    scale_fill_brewer(palette = "Dark2") +
+    coord_flip() +
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
+```
+
+```{r, fig.width=8, fig.cap="Questions with 3 or more residents answering with an unfavorable score"}
+scores %>%
+    filter(Unfavorable >= 0.3) %>%
+    arrange(Unfavorable, desc(Score)) %>%
+    # top_n(10, Unfavorable) %>%
+    mutate_at("Unfavorable", funs(. * 100)) %>%
+    mutate_at("Item", fct_inorder) %>%
+    ggplot(aes(x = Item, y = Unfavorable)) +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    xlab("") +
+    scale_y_continuous("Residents with Unfavorable Score (%)") +
+    scale_fill_brewer(palette = "Dark2") +
+    coord_flip() +
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
+```

@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, message=FALSE}
 library(tidyverse)
 library(forcats)
 library(themebg)
@@ -21,17 +21,23 @@ library(plotly)
 scores <- read_rds("../data/final/scores.Rds")
 ```
 
-```{r, fig.height=7, fig.cap="Aggregate score for each question"}
-scores %>%
+```{r, fig.width=8, fig.height=7, fig.cap="Aggregate score for each question. Solid line indicates overall score, dashed line indicates overall employee score."}
+p <- scores %>%
     arrange(Score) %>%
     mutate_at("Item", fct_inorder) %>%
     ggplot(aes(x = Item, y = Score)) +
-    geom_bar(stat = "identity", fill = "grey85") +
-    geom_hline(yintercept = 3.62, color = "grey50") +
-    geom_hline(yintercept = 3.62 + 0.65, color = "grey50", linetype = "dashed") +
+    geom_bar(aes(fill = Domain), stat = "identity") +
+    geom_hline(yintercept = 3.62, color = "grey35") +
+    geom_hline(yintercept = 3.62 + 0.65, color = "grey20", linetype = "dashed") +
+    scale_fill_brewer(palette = "Dark2") +
     coord_flip() +
-    theme_bg()
+    theme_bg(yticks = FALSE) +
+    theme(legend.position = c(0, 1), 
+          legend.justification = c(1, 0),
+          legend.direction = "horizontal",
+          plot.margin = unit(c(5, 1, 0.5, 0.5), "lines"))
 
-ggplotly(dynamicTicks = TRUE)
+p
+# ggplotly(p, dynamicTicks = TRUE)
 ```
 
